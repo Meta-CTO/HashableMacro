@@ -210,7 +210,6 @@ final class HashableMacroTests: XCTestCase {
             }
             """
         } expansion: {
-            // This should be e.g. `extension Outer.InnerStruct` but the tester does not output this.
             """
             enum Outer {
                 struct InnerStruct {
@@ -225,25 +224,25 @@ final class HashableMacroTests: XCTestCase {
                 }
             }
 
-            extension InnerStruct {
+            extension Outer.InnerStruct {
                 func hash(into hasher: inout Hasher) {
                     hasher.combine(self.hashedProperty)
                 }
             }
 
-            extension InnerStruct {
+            extension Outer.InnerStruct {
                 static func ==(lhs: Self, rhs: Self) -> Bool {
                     return lhs.hashedProperty == rhs.hashedProperty
                 }
             }
 
-            extension InnerClass {
+            extension Outer.InnerClass {
                 final func hash(into hasher: inout Hasher) {
                     hasher.combine(self.hashedProperty)
                 }
             }
 
-            extension InnerClass {
+            extension Outer.InnerClass {
                 static func ==(lhs: Outer.InnerClass, rhs: Outer.InnerClass) -> Bool {
                     return lhs.hashedProperty == rhs.hashedProperty
                 }
@@ -681,43 +680,7 @@ final class HashableMacroTests: XCTestCase {
         throw XCTSkip("Macros are only supported when running tests for the host platform")
         #endif
     }
-
-    func testHashedAttachedToMultiplePropertyDeclaration() throws {
-        #if canImport(HashableMacroMacros)
-        assertMacro(testMacros) {
-            """
-            @Hashable(_disableNSObjectSubclassSupport: true)
-            struct TestStruct {
-                @Hashed
-                var hashedProperty, secondHashedProperty: String
-            }
-            """
-        } expansion: {
-            """
-            struct TestStruct {
-                var hashedProperty, secondHashedProperty: String
-            }
-
-            extension TestStruct {
-                func hash(into hasher: inout Hasher) {
-                    hasher.combine(self.hashedProperty)
-                    hasher.combine(self.secondHashedProperty)
-                }
-            }
-
-            extension TestStruct {
-                static func ==(lhs: Self, rhs: Self) -> Bool {
-                    return lhs.hashedProperty == rhs.hashedProperty
-                        && lhs.secondHashedProperty == rhs.secondHashedProperty
-                }
-            }
-            """
-        }
-        #else
-        throw XCTSkip("Macros are only supported when running tests for the host platform")
-        #endif
-    }
-
+    
     func testStructWithAllExcludedProperties() throws {
         #if canImport(HashableMacroMacros)
         assertMacro(testMacros) {

@@ -21,11 +21,11 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/apple/swift-syntax.git",
-      from: "509.1.0"
+      from: "600.0.0-latest"
     ),
     .package(
         url: "https://github.com/pointfreeco/swift-macro-testing.git",
-        branch: "main" // Needed to test diagnostics. 0.2.3 or higher should be ok.
+        from: "0.5.2" // Needed to test diagnostics. 0.2.3 or higher should be ok.
     ),
   ],
   targets: [
